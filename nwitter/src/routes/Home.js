@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { dbService } from "myBase";
+import { v4 as uuidv4 } from "uuid";
+import { dbService, storageService } from "myBase";
 import Nweet from "components/Nweet";
 
 //export default () => <span>Home</span>;
@@ -19,12 +20,15 @@ const Home = ({ userObj }) => {
   }, []);
   const onSubmit = async (event) => {
     event.preventDefault();
-    await dbService.collection("nweets").add({
+    /*await dbService.collection("nweets").add({
       text: nweet,
       createdAt: Date.now(),
       creatorId: userObj.uid,
     });
-    setNweet("");
+    setNweet("");*/
+    const fileRef = storageService.ref().child(`${userObj.uid}/${uuidv4()}/`);
+    const response = await fileRef.putString(attachment, "data_url");
+    console.log(response);
   };
   const onChange = (event) => {
     const {
