@@ -7,7 +7,7 @@ import Nweet from "components/Nweet";
 const Home = ({ userObj }) => {
   const [nweet, setNweet] = useState("");
   const [nweets, setNweets] = useState([]);
-  const [attachment, setAttachment] = useState();
+  const [attachment, setAttachment] = useState("");
 
   useEffect(() => {
     dbService.collection("nweets").onSnapshot((snapshot) => {
@@ -20,15 +20,23 @@ const Home = ({ userObj }) => {
   }, []);
   const onSubmit = async (event) => {
     event.preventDefault();
-    /*await dbService.collection("nweets").add({
+    let attachmentURL = "";
+    if (attachment != "") {
+      const attachmentRef = storageService
+        .ref()
+        .child(`${userObj.uid}/${uuidv4()}/`);
+      const response = await attachmentRef.putString(attachment, "data_url");
+      attachmentURL = await response.ref.getDownloadURL();
+    }
+    const nweetObj = {
       text: nweet,
       createdAt: Date.now(),
       creatorId: userObj.uid,
-    });
-    setNweet("");*/
-    const fileRef = storageService.ref().child(`${userObj.uid}/${uuidv4()}/`);
-    const response = await fileRef.putString(attachment, "data_url");
-    console.log(response);
+      attachmentURL,
+    };
+    await dbService.collection("nweets").add(nweetObj);
+    setNweet("");
+    setAttachment("");
   };
   const onChange = (event) => {
     const {
@@ -50,7 +58,7 @@ const Home = ({ userObj }) => {
     };
     reader.readAsDataURL(theFile);
   };
-  const onClearAttachmentClick = () => setAttachment(null);
+  const onClearAttachmentClick = () => setAttachment("");
   return (
     <div>
       <form onSubmit={onSubmit}>
