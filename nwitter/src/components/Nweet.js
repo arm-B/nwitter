@@ -25,36 +25,38 @@ const Nweet = ({ nweetObj, isOwner }) => {
     setNewNweet(value);
   };
   return (
-    <div>
+    <div className="nweet">
       {editing ? (
         <>
           {isOwner && (
             <>
-              <form onSubmit={onSubmit}>
+              <form onSubmit={onSubmit} className="container nweetedit">
                 <input
                   type="text"
                   placeholder="Edit your nweet"
                   value={newNweet}
                   required
+                  autoFocus
                   onChange={onChange}
+                  className="formInput"
                 />
-                <input type="submit" value="Update" />
+                <input type="submit" value="Update" className="formBtn" />
               </form>
-              <button onClick={toggleEditing}>Cancel</button>
+              <button onClick={toggleEditing} className="formBtn cancelBtn">
+                Cancel
+              </button>
             </>
           )}
         </>
       ) : (
         <>
           <h4>{nweetObj.text}</h4>
-          {nweetObj.attachmentURL && (
-            <img src={nweetObj.attachmentURL} width="50px" height="50px" />
-          )}
+          {nweetObj.attachmentURL && <img src={nweetObj.attachmentURL} />}
           {isOwner && (
-            <>
-              <button onClick={onDeleteClick}>Delete</button>
-              <button onClick={toggleEditing}>Edit</button>
-            </>
+            <div className="nweet__actions">
+              <span onClick={onDeleteClick}>Delete</span>
+              <span onClick={toggleEditing}>Edit</span>
+            </div>
           )}
         </>
       )}
